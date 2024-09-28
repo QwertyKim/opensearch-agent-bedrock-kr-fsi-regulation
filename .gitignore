@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+.ipynb_checkpoints/
+
+.env
+*.log
+session_info_with_emb.json
+*.config
+*.cfg
+
+*.lock
+
+.DS_Store
+Thumbs.db
