@@ -15,12 +15,9 @@ This solution addresses these limitations by leveraging OpenSearch for efficient
 ├── 3.rag_with_opensearch.ipynb
 ├── chatbot-with-opensearch.py
 ├── libs
-│   ├── __pycache__
-│   │   └── workflow.cpython-39.pyc
 │   └── workflow.py
 ├── prompts.yaml
 ├── reinvent.txt
-├── session_info_with_emb.json
 └── sessions_info.json
 ```
 
