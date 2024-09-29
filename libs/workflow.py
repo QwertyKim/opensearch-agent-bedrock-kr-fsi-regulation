@@ -136,7 +136,8 @@ def generate_answer_with_text_search(search_result, search_query, question):
 
     return response['output']['message']['content'][0]['text']
 
-def format_search_results(search_result, max_results=20):
+
+def format_search_results(search_result, max_results=10):
     hits = search_result.get('hits', {}).get('hits', [])
 
     if hits:
@@ -147,9 +148,24 @@ def format_search_results(search_result, max_results=20):
             source = hit.get('_source', {})
             code = source.get('code', 'N/A')
             title = source.get('title', 'N/A')
-            formatted_results.append(f"{code}: {title}")
+            synopsis = source.get('synopsis', 'N/A')
+            topics = ', '.join(source.get('topics', ['N/A']))
+            aws_services = ', '.join(source.get('aws_services', ['N/A']))
+            target_audience = ', '.join(source.get('target_audience', ['N/A']))
+            session_format = source.get('session_format', 'N/A')
 
-        result_str = "\n".join(formatted_results)
+            formatted_result = f"""
+Code: {code}
+Title: {title}
+Synopsis: {synopsis}
+Topics: {topics}
+AWS Services: {aws_services}
+Target Audience: {target_audience}
+Session Format: {session_format}
+"""
+            formatted_results.append(formatted_result.strip())
+
+        result_str = "\n\n".join(formatted_results)
 
         if total_hits > max_results:
             result_str += f"\n\n... (Showing {max_results} out of {total_hits} results)"
@@ -252,6 +268,7 @@ def generate_answer_with_similarity_search_as_fallback(search_result, question, 
 def execute_workflow(question, progress_container):
     os_client = init_opensearch_client()
     index_name = os.getenv('OPENSEARCH_INDEX')
+    max_results = 10
 
     progress_container.info("🔍 Starting our search...")
     response = search_tool_selection(question)
@@ -260,15 +277,15 @@ def execute_workflow(question, progress_container):
         search_query, previous_sys_prompt, previous_user_prompt = search_by_text(topics, audience_types, session_format, question)
         #print("search_query:", search_query)
         search_result, error = execute_query(os_client, index_name, search_query)
+        #print(search_result)
         if error:
             #print(f"attempt failed. Error: {error}")
             progress_container.warning("Hmm, let's try that again...")
-            revised_query = search_by_text_as_fallback(previous_sys_prompt, previous_user_prompt, search_query, error)
-            search_result, error = execute_query(os_client, index_name, revised_query)
+            search_query = search_by_text_as_fallback(previous_sys_prompt, previous_user_prompt, search_query, error)
+            search_result, error = execute_query(os_client, index_name, search_query)
 
             if error:
                 progress_container.warning("No luck there. Let's try a different approach...")
-                max_results = 20
                 search_result = search_by_similarity(os_client, index_name, question, max_results)
                 answer = generate_answer_with_similarity_search(search_result, question)
                 return answer, search_result
@@ -277,11 +294,11 @@ def execute_workflow(question, progress_container):
             progress_container.success("📚 Generating answer...")
             search_result_str = format_search_results(search_result)
             answer = generate_answer_with_text_search(search_result_str, search_query, question)
-            return answer, search_result_str
+
+            return answer, "Search Query:\n" + search_query + '\n\n' + search_result_str
 
     else:
         progress_container.info("🔍 Digging deeper for relevant info...")
-        max_results = 20
         search_result = search_by_similarity(os_client, index_name, question, max_results)
         progress_container.success("📚 Generating answer...")
         answer = generate_answer_with_similarity_search(search_result, question)

@@ -47,15 +47,22 @@ search_by_text:
     Your task is to create DSL queries for an OpenSearch index containing AWS re:Invent session data.
 
     The data in the OpenSearch index has the following structure:
-    {{
-        "code": "STG204",
-        "title": "...",
-        "synopsis": "...",
-        "topics": ["Storage"],
-        "aws_services": ["AWS DataSync"],
-        "target_audience": ["IT Professionals"],
-        "session_format": "Breakout Session"
-    }}
+    '{{{{
+      "reinvent_session": {{
+        "mappings": {{
+          "properties": {{
+            "aws_services": {{"type": "keyword"}},
+            "code": {{"type": "keyword"}},
+            "session_format": {{"type": "keyword"}},
+            "synopsis": {{"type": "text"}},
+            "target_audience": {{"type": "keyword"}},
+            "title": {{"type": "text"}},
+            "topics": {{"type": "keyword"}}
+          }}
+        }}
+      }}
+    }}}}'
+
     Possible values for topics:
     {topics}
 
@@ -70,8 +77,10 @@ search_by_text:
     - If the question is about containers, map it to services like "Amazon ECS" or "Amazon EKS".
     - If the question is about databases, map it to relevant database services like "Amazon RDS" or "Amazon DynamoDB".
 
-    Make sure to include the necessary fields in the query to answer the user's question. 
-    If the user asks for a list or all sessions, include the 'code' and 'title' fields in your query as a source.
+    When creating the query:
+    1. If the user asks for a list or all sessions, only include 'code' and 'title' in the _source field.
+    2. For specific questions or detailed information requests, include other relevant fields in the _source.
+    3. Adjust the query and fields included based on the user's specific request.
 
   user_template: |
     Provide only the DSL query without any additional explanation.
