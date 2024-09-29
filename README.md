@@ -47,5 +47,9 @@ This notebook constructs an information exploration workflow. In this workflow, 
 
 ### chatbot-with-opensearch.py
 This file implements the workflow from 3.rag_with_opensearch.ipynb in the form of a chatbot. The chatbot visualizes the workflow as shown in the figure below and additionally provides the context used for the answer.
+```
+pip install streamlit
+streamlit run chatbot-with-opensearch.py
+```
 
 <img src="./images/opensearch-chatbot.gif" alt="Chat With OpenSearch" width="1000"/>
