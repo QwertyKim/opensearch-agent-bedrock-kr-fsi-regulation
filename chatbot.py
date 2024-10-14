@@ -3,17 +3,17 @@ import boto3
 import json
 from libs.workflow import execute_workflow
 
-BEDROCK_REGIONS = ['us-west-2', 'us-east-1', 'ap-northeast-1']
+BEDROCK_REGIONS = ['us-west-2', 'us-east-1', 'ap-northeast-2']
 
-st.set_page_config(page_title='re:Invent Session Chatbot', page_icon="🤖", layout="wide")
-st.title("🤖 re:Invent Session Chatbot")
+st.set_page_config(page_title='Korean FSI Regulation Chatbot', page_icon="🤖", layout="wide")
+st.title("🤖 Korean FSI Regulation Chatbot")
 
 def new_chat():
-    st.session_state.messages = [{"role": "assistant", "content": "Hello! What would you like to know about re:Invent sessions?"}]
+    st.session_state.messages = [{"role": "assistant", "content": "Hello! What would you like to know about Korean FSI Regulation?"}]
 
 def initialize_session_state():
     if "messages" not in st.session_state:
-        st.session_state.messages = [{"role": "assistant", "content": "Hello! What would you like to know about re:Invent sessions?"}]
+        st.session_state.messages = [{"role": "assistant", "content": "Hello! What would you like to know about Korean FSI Regulation?"}]
 
 def render_sidebar():
     with st.sidebar:

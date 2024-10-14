@@ -1,0 +1,13 @@
+sagemaker
+langchain
+opensearch-py
+faiss-cpu
+pdfplumber
+termcolor
+opensearch_dsl
+pikepdf
+pypdf
+pytesseract
+boto3
+python-dotenv
+streamlit
